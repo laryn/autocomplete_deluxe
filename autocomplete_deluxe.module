@@ -32,8 +32,8 @@ function autocomplete_deluxe_taxonomy_callback($field_name, $tags_typed = '', $l
   $use_synonyms = !empty($_GET['synonyms']);
 
   // The user enters a comma-separated list of tags. We only autocomplete the last tag.
-  $tags_typed = drupal_explode_tags($tags_typed);
-  $tag_last = drupal_strtolower(array_pop($tags_typed));
+  $tags_typed = backdrop_explode_tags($tags_typed);
+  $tag_last = backdrop_strtolower(array_pop($tags_typed));
 
   $matches = array();
 
@@ -96,7 +96,7 @@ function autocomplete_deluxe_taxonomy_callback($field_name, $tags_typed = '', $l
       ->fetchAllKeyed();
   }
 
-  $prefix = count($tags_typed) ? drupal_implode_tags($tags_typed) . ', ' : '';
+  $prefix = count($tags_typed) ? backdrop_implode_tags($tags_typed) . ', ' : '';
 
   $term_matches = array();
   foreach ($tags_return as $tid => $name) {
@@ -108,7 +108,7 @@ function autocomplete_deluxe_taxonomy_callback($field_name, $tags_typed = '', $l
     $term_matches[$prefix . $n] = check_plain($name);
   }
 
-  drupal_json_output($term_matches);
+  backdrop_json_output($term_matches);
 }
 
 /**
@@ -251,15 +251,17 @@ function autocomplete_deluxe_field_widget_form(&$form, &$form_state, $field, $in
 function autocomplete_deluxe_element_process($element) {
   $element['#attached'] = array(
     'library' => array(array('system', 'ui.autocomplete'), array('system', 'ui.button')),
-    'js' => array(drupal_get_path('module', 'autocomplete_deluxe') . '/autocomplete_deluxe.js'),
-    'css' => array(drupal_get_path('module', 'autocomplete_deluxe') . '/autocomplete_deluxe.css'),
+    'js' => array(backdrop_get_path('module', 'autocomplete_deluxe') . '/js/autocomplete_deluxe.js'),
+    'css' => array(backdrop_get_path('module', 'autocomplete_deluxe') . '/css/autocomplete_deluxe.css'),
   );
   // Workaround for problems with jquery css in seven theme.
+  /* 
   if ($GLOBALS['theme'] == 'seven') {
-    $element['#attached']['css'][] = drupal_get_path('module', 'autocomplete_deluxe') . '/autocomplete_deluxe.seven.css';
+    $element['#attached']['css'][] = backdrop_get_path('module', 'autocomplete_deluxe') . '/css/autocomplete_deluxe.seven.css';
   }
+  */
 
-  $html_id = drupal_html_id('autocomplete-deluxe-input');
+  $html_id = backdrop_html_id('autocomplete-deluxe-input');
 
   $element['#after_build'][] = 'autocomplete_deluxe_after_build';
 
@@ -347,7 +349,7 @@ function autocomplete_deluxe_value(&$element, $input = FALSE, $form_state = NULL
  * Fixes up the form value by applying the multiplier.
  */
 function autocomplete_deluxe_after_build($element, &$form_state) {
-  // By default drupal sets the maxlength to 128 if the property isn't
+  // By default Backdrop sets the maxlength to 128 if the property isn't
   // specified, but since the limit isn't useful in some cases,
   // we unset the property.
   unset($element['textfield']['#maxlength']);
